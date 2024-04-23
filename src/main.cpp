@@ -4,62 +4,120 @@
  * @created     : Sunday Apr 21, 2024 22:06:57 CEST
  */
 
-#include "Panel.hpp"
-#include <cstdlib>
-#include <ncurses.h>
+#include "gui/Panel.hpp"
+#include "Client.hpp"
+#include "Employee.hpp"
+#include <map>
 
-using namespace std;
+using namespace Stanley;
+
+bool isRunning = true;
+
+std::vector<Client> clients = { 
+  Client("Maili", "Truong", "04/10/2002", "14 ajuzd, Vincennes", "noalimai@hotmail.fr", "0777"), 
+};
+
+Employee chief(1383, "Stanley", "Arnaud", "mai", "47 reuinon", "akd", "zoij", "ljnda", "Chief", 82937);
+
+/* CALLBACKS */
+void editClientCallback()
+{
+}
+
+void addClientCallback()
+{
+  char first_name[64];
+  char last_name[64];
+  char birth_date[64];
+  char address[64];
+  char mail[64];
+  char phone_number[64];
+
+  clear();
+  printw("Add a client : \n");
+  printw("\nFirst name : "); getstr(first_name);
+  printw("\nLast name : "); getstr(last_name);
+  printw("\nBirth date (format:dd/mm/yy ex:01/02/2003) : "); getstr(birth_date);
+  printw("\nAddress : "); getstr(address);
+  printw("\nE-mail : "); getstr(mail);
+  printw("\nPhone number : "); getstr(phone_number);
+  printw("\n\nThe client has been well added !\n");
+  getch();
+
+  clients.push_back(Client(first_name, last_name, birth_date, address, mail, phone_number));
+}
+
 
 int main(int c, char *v[])
 {
-  Panel home("Home", { Button("Test"), Button("Hello"), Button("Bite") });
-  Panel test("Test", { Button ("Return", &home) });
-  Button test2("Test2", &test);
-  home.buttons.push_back(test2);
+  /* PANELS */
+  Panel home_panel("Menu");
+  home_panel.setDefault();
 
-  system("clear");
-  Panel::selected->display();
+  Panel clients_panel("Clients", { 
+      Button("Return", ALIGN_CENTER, &home_panel),
+      Button("Research"),
+      Button("Filters"),
+      Button("Add client", ALIGN_CENTER, nullptr, addClientCallback),
+      Button(),
+      });
 
-  int line = 0;
+  Panel employees_panel("Employees", {
+      Button("Return", ALIGN_CENTER, &home_panel),
+      Button("Print the organigram", ALIGN_CENTER, nullptr, [](){ clear(); printw(Employee::getOrganigramTree(chief).c_str()); getch(); }),
+      Button("Research"),
+      Button("Filters"),
+      Button("Add employees", ALIGN_CENTER, nullptr, addClientCallback),
+      Button(),
+      });
 
-  initscr();
-  noecho();
-  clear();
-  refresh();
-  endwin();
+  Panel edit_panel("Choose an action", {
+      Button("Return", ALIGN_CENTER, &clients_panel),
+      Button("Edit first name"),
+      Button("Edit last name"),
+      Button("Remove client"),
+      });
 
-  while (1)
+  Panel statistics_panel("Statistics", { 
+      Button("Return", ALIGN_CENTER, &home_panel),
+      Button()
+      });
+  std::map<std::string, float> statistics;
+  statistics["Average"] = 10;
+  statistics["Variance"] = 20;
+  for (auto item : statistics)
   {
-    cbreak();
-    keypad(stdscr, TRUE);
-    int c = 0;
-    switch((c = getch())) {
-      case KEY_UP:
-        line--;
-        break;
-      case KEY_DOWN:
-        line++;
-        break;
-      case 10:
-        {
-          cout << "enter" << endl;
-          Panel::selected->buttons[Panel::selected->selected_button_id].action();
-          break;
-        }
-      default:
-        break;
-    }
-    endwin();
-
-    if (line < 0) line = Panel::selected->buttons.size() - 1;
-    else if (line > Panel::selected->buttons.size() - 1) line = 0;
-
-    system("clear");
-    Panel::selected->selected_button_id = line;
-
-    Panel::selected->display();
-
+    std::string str = item.first + " = " + std::to_string(item.second);
+    statistics_panel.buttons.push_back(Button(str));
   }
+
+  home_panel.buttons.push_back(Button("Clients", ALIGN_CENTER, &clients_panel));
+  home_panel.buttons.push_back(Button("Employees", ALIGN_CENTER, &employees_panel));
+  home_panel.buttons.push_back(Button("Statistics", ALIGN_CENTER, &statistics_panel));
+  home_panel.buttons.push_back(Button("Quit", ALIGN_CENTER, nullptr, [](){ isRunning = false; }));
+
+  /* EMPLOYEES */
+  Employee e1(1383, "Maxime", "Arnaud", "mai", "47 reuinon", "akd", "zoij", "ljnda", "Chief", 82937);
+  Employee e2(1383, "Maili", "Arnaud", "mai", "47 reuinon", "akd", "zoij", "ljnda", "Chief", 82937);
+
+  chief.sub_employees.push_back(e1);
+  chief.sub_employees.push_back(e2);
+
+  /* LOOP */
+  Panel::active->display();
+  while(isRunning)
+  {
+    clients_panel.buttons.erase(clients_panel.buttons.begin() + 5, clients_panel.buttons.end());
+    for (Client const &client : clients)
+    {
+      clients_panel.buttons.push_back(Button(std::string(client), ALIGN_LEFT, &edit_panel));
+    }
+
+    Panel::active->display();
+    Panel::active->update();
+  }
+
+  endwin();
 
   return 0;
 }
