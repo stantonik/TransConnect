@@ -10,8 +10,10 @@
 #include <sstream>
 #include <string>
 
-class Person
+namespace Stanley
 {
+  class Person
+  {
     public:
       std::string first_name;
       std::string last_name;
@@ -30,7 +32,8 @@ class Person
       }
 
     private:
-};
+  };
+}
 
 #endif 
 

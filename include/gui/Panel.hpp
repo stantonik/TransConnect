@@ -14,8 +14,10 @@
 
 #include "Button.hpp"
 
-class Panel
+namespace Stanley
 {
+  class Panel
+  {
     public:
       Panel(std::string title, std::vector<Button> buttons = { });
       ~Panel();
@@ -34,7 +36,8 @@ class Panel
     private:
       int selected_line;
       static int count;
-};
+  };
+}
 
 #endif
 

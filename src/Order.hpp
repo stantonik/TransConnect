@@ -8,33 +8,48 @@
 #define ORDER_HPP
 
 #include "Client.hpp"
+#include "Driver.hpp"
 #include "Employee.hpp"
+#include "Vehicule.hpp"
 #include <string>
 #include <fstream>
+#include <vector>
 
-struct Travel
-{
-  std::string A;
-  std::string B;
-  std::string distance;
-  float time;
-};
 
-class Order
+namespace Stanley
 {
+  struct Road
+  {
+    std::string A;
+    std::string B;
+    std::string distance;
+    float time;
+  };
+
+  class Order
+  {
     public:
       std::string A;
       std::string B;
+      std::string date;
       float const &distance;
-      Client client;
+      static std::vector<Vehicule> vehicules;
+      Vehicule *vehicule;
+      Driver *driver;
+      Client *client;
 
-      Order(Client client, std::string A, std::string B);
+      Order(Client *client, std::string A, std::string B, std::string date);
+
+      static std::vector<Road> getRoads(std::string filepath);
 
     private:
       float mDistance;
 
-      Travel findTravel(std::string path, std::string A, std::string B);
-};
+      float getPrice() const;
+      std::string getRoute() const;
+
+  };
+}
 
 #endif 
 

@@ -10,24 +10,33 @@
 #include <iostream>
 #include <string>
 
-#define ALIGN_CENTER 0
-#define ALIGN_LEFT -1
-#define ALIGN_RIGHT 1
 
-class Panel;
-
-class Button
+namespace Stanley
 {
+  class Panel;
+
+  enum class Align
+  {
+    LEFT,
+    CENTER,
+    RIGHT
+  };
+
+  class Button
+  {
     public:
-      Button(std::string title = "", int alignement = ALIGN_CENTER, Panel *panel_to_display = nullptr, void (*callback)() = nullptr);
+      Button(std::string title = "", Align alignement = Align::CENTER, Panel *panel_to_display = nullptr, void (*callback)(Button *button) = nullptr);
+
+      static Button ret(Panel *panel);
 
       std::string title;
       Panel *panel_to_display;
-      int alignement;
+      Align alignement;
 
-      void (*callback)();
+      void (*callback)(Button *button);
       void action();
-};
+  };
+}
 
 #endif
 

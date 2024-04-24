@@ -24,7 +24,7 @@ void editClientCallback()
 {
 }
 
-void addClientCallback()
+void addClientCallback(Button *button)
 {
   char first_name[64];
   char last_name[64];
@@ -55,31 +55,31 @@ int main(int c, char *v[])
   home_panel.setDefault();
 
   Panel clients_panel("Clients", { 
-      Button("Return", ALIGN_CENTER, &home_panel),
+      Button("Return", Align::CENTER, &home_panel),
       Button("Research"),
       Button("Filters"),
-      Button("Add client", ALIGN_CENTER, nullptr, addClientCallback),
+      Button("Add client", Align::CENTER, nullptr, addClientCallback),
       Button(),
       });
 
   Panel employees_panel("Employees", {
-      Button("Return", ALIGN_CENTER, &home_panel),
-      Button("Print the organigram", ALIGN_CENTER, nullptr, [](){ clear(); printw(Employee::getOrganigramTree(chief).c_str()); getch(); }),
+      Button("Return", Align::CENTER, &home_panel),
+      Button("Print the organigram", Align::CENTER, nullptr, [](Button *button){ clear(); printw(Employee::getOrganigramTree(chief).c_str()); getch(); }),
       Button("Research"),
       Button("Filters"),
-      Button("Add employees", ALIGN_CENTER, nullptr, addClientCallback),
+      Button("Add employees", Align::CENTER, nullptr, addClientCallback),
       Button(),
       });
 
   Panel edit_panel("Choose an action", {
-      Button("Return", ALIGN_CENTER, &clients_panel),
+      Button("Return", Align::CENTER, &clients_panel),
       Button("Edit first name"),
       Button("Edit last name"),
       Button("Remove client"),
       });
 
   Panel statistics_panel("Statistics", { 
-      Button("Return", ALIGN_CENTER, &home_panel),
+      Button("Return", Align::CENTER, &home_panel),
       Button()
       });
   std::map<std::string, float> statistics;
@@ -91,10 +91,10 @@ int main(int c, char *v[])
     statistics_panel.buttons.push_back(Button(str));
   }
 
-  home_panel.buttons.push_back(Button("Clients", ALIGN_CENTER, &clients_panel));
-  home_panel.buttons.push_back(Button("Employees", ALIGN_CENTER, &employees_panel));
-  home_panel.buttons.push_back(Button("Statistics", ALIGN_CENTER, &statistics_panel));
-  home_panel.buttons.push_back(Button("Quit", ALIGN_CENTER, nullptr, [](){ isRunning = false; }));
+  home_panel.buttons.push_back(Button("Clients", Align::CENTER, &clients_panel));
+  home_panel.buttons.push_back(Button("Employees", Align::CENTER, &employees_panel));
+  home_panel.buttons.push_back(Button("Statistics", Align::CENTER, &statistics_panel));
+  home_panel.buttons.push_back(Button("Quit", Align::CENTER, nullptr, [](Button *button){ isRunning = false; }));
 
   /* EMPLOYEES */
   Employee e1(1383, "Maxime", "Arnaud", "mai", "47 reuinon", "akd", "zoij", "ljnda", "Chief", 82937);
@@ -110,7 +110,7 @@ int main(int c, char *v[])
     clients_panel.buttons.erase(clients_panel.buttons.begin() + 5, clients_panel.buttons.end());
     for (Client const &client : clients)
     {
-      clients_panel.buttons.push_back(Button(std::string(client), ALIGN_LEFT, &edit_panel));
+      clients_panel.buttons.push_back(Button(std::string(client), Align::LEFT, &edit_panel));
     }
 
     Panel::active->display();

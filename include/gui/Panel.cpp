@@ -6,10 +6,10 @@
 
 #include "Panel.hpp"
 
-Panel *Panel::active = nullptr;
-int Panel::count = -1;
+Stanley::Panel *Stanley::Panel::active = nullptr;
+int Stanley::Panel::count = -1;
 
-Panel::Panel(std::string title, std::vector<Button> buttons) : title(title), buttons(buttons)
+Stanley::Panel::Panel(std::string title, std::vector<Button> buttons) : title(title), buttons(buttons)
 {
   selected_line = 0;    
 
@@ -27,32 +27,32 @@ Panel::Panel(std::string title, std::vector<Button> buttons) : title(title), but
   count++;
 }
 
-Panel::~Panel()
+Stanley::Panel::~Panel()
 {
   count--;
 }
 
-void Panel::setDefault() { active = this; }
+void Stanley::Panel::setDefault() { active = this; }
 
-void Panel::scrollDown() 
+void Stanley::Panel::scrollDown() 
 {
   selected_line++;
   if (selected_line > buttons.size() - 1) selected_line = 0;  
 }
 
-void Panel::scrollUp() 
+void Stanley::Panel::scrollUp() 
 {
   selected_line--;
   if (selected_line < 0) selected_line = buttons.size() - 1;  
 }
 
-void Panel::select()
+void Stanley::Panel::select()
 {
   Button &selected_button = buttons[selected_line];
   selected_button.action();
 }
 
-void Panel::display()
+void Stanley::Panel::display()
 {
   clear();
   int x, y;
@@ -72,9 +72,9 @@ void Panel::display()
     {
       str = "  " + button.title;
     }
-    if (button.alignement == ALIGN_CENTER) move(3 + i, x / 2 - str.length() / 2);
-    else if (button.alignement == ALIGN_LEFT) move(3 + i, 0);
-    else if (button.alignement == ALIGN_RIGHT) move(3 + i, 0);
+    if (button.alignement == Align::CENTER) move(3 + i, x / 2 - str.length() / 2);
+    else if (button.alignement == Align::LEFT) move(3 + i, 0);
+    else if (button.alignement == Align::RIGHT) move(3 + i, 0);
     printw(str.c_str()); 
     printw("\n");
     attron(COLOR_PAIR(2));
@@ -82,7 +82,7 @@ void Panel::display()
   refresh();
 }
 
-void Panel::update()
+void Stanley::Panel::update()
 {
   cbreak();
   noecho();

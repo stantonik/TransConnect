@@ -10,14 +10,15 @@
 #include "Person.hpp"
 #include <string>
 
-
-class Client : public Person
+namespace Stanley
 {
+  class Client : public Person
+  {
     public:
       Client(std::string first_name, std::string last_name, std::string birth_date, std::string address, std::string mail, std::string phone_number) : Person(first_name, last_name, birth_date, address, mail, phone_number){ }
 
     private:
-};
-
+  };
+}
 #endif 
 
